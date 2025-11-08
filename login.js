@@ -21,6 +21,12 @@ if (accountList.length === 0) {
   process.exit(1);
 }
 
+// 新增：将密码隐藏显示
+function maskPassword(pass) {
+  if (!pass) return '****';
+  return pass.length <= 2 ? '*'.repeat(pass.length) : '****' + pass.slice(-2);
+}
+
 async function sendTelegram(message) {
   if (!token || !chatId) return;
 
@@ -42,7 +48,7 @@ async function sendTelegram(message) {
 }
 
 async function loginWithAccount(user, pass) {
-  console.log(`\n🚀 开始登录账号: ${user}`);
+  console.log(`\n🚀 开始登录账号: ${user} (密码: ${maskPassword(pass)})`);
   
   const browser = await chromium.launch({ 
     headless: true,
