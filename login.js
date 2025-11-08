@@ -48,7 +48,7 @@ async function sendTelegram(message) {
 }
 
 async function loginWithAccount(user, pass) {
-  console.log(`\n🚀 开始登录账号: ${user} (密码: ${maskPassword(pass)})`);
+  console.log(`\n🚀 开始登录账号: ${user}`);
   
   const browser = await chromium.launch({ 
     headless: true,
