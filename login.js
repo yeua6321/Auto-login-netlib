@@ -28,7 +28,13 @@ function maskPassword(pass) {
 }
 
 async function sendTelegram(message) {
-  if (!token || !chatId) return;
+  // 检查配置
+  if (!token || !chatId) {
+    console.log('⚠️ Telegram 未配置');
+    console.log(`  BOT_TOKEN: ${token ? '✅ 已设置' : '❌ 未设置'}`);
+    console.log(`  CHAT_ID: ${chatId ? '✅ 已设置' : '❌ 未设置'}`);
+    return;
+  }
 
   const now = new Date();
   const hkTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
@@ -37,13 +43,46 @@ async function sendTelegram(message) {
   const fullMessage = `🎉 Netlib 登录通知\n\n登录时间：${timeStr}\n\n${message}`;
 
   try {
-    await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
-      chat_id: chatId,
-      text: fullMessage
-    }, { timeout: 10000 });
-    console.log('✅ Telegram 通知发送成功');
+    console.log(`📤 正在发送 Telegram 消息到 ${chatId}...`);
+    
+    const response = await axios.post(
+      `https://api.telegram.org/bot${token}/sendMessage`, 
+      {
+        chat_id: chatId,
+        text: fullMessage
+      }, 
+      { timeout: 15000 }
+    );
+    
+    if (response.data.ok) {
+      console.log('✅ Telegram 通知发送成功');
+    } else {
+      console.log('❌ Telegram API 返回错误:', JSON.stringify(response.data, null, 2));
+    }
+    
   } catch (e) {
     console.log('⚠️ Telegram 发送失败');
+    
+    // 详细错误信息
+    if (e.response) {
+      console.log('HTTP 状态码:', e.response.status);
+      console.log('错误信息:', JSON.stringify(e.response.data, null, 2));
+      
+      // 常见错误提示
+      if (e.response.status === 404) {
+        console.log('💡 Bot Token 无效，请检查 BOT_TOKEN');
+      } else if (e.response.status === 400) {
+        console.log('💡 Chat ID 错误，或者你还没有给机器人发送过 /start');
+      } else if (e.response.status === 401) {
+        console.log('💡 Bot Token 未授权');
+      }
+    } else if (e.code === 'ECONNABORTED') {
+      console.log('💡 请求超时，检查网络连接');
+    } else if (e.code === 'ENOTFOUND') {
+      console.log('💡 无法连接到 Telegram API，检查网络或代理设置');
+    } else {
+      console.log('错误详情:', e.message);
+    }
   }
 }
 
