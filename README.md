@@ -21,8 +21,8 @@
 - `ACCOUNTS`  Netlib账户(必填)，格式(单账号)：user:pass   格式(多账号)：user1:pass1,user2:pass2 
 
 - telegram为可选环境变量,不需要通知可不填写
-- `BOT_TOKEN` 	Telegram机器人Token(https://t.me/BotFather)获取
-- `CHAT_ID`     Telegram 聊天ID
+- `BOT_TOKEN` 	Telegram机器人Token https://t.me/BotFather 创建bot后获取
+- `CHAT_ID`     Telegram 聊天ID https://t.me/laowang_serv00_bot 发送 /start 获取
 	    
 4. GitHub Actions 初始手动执行检查是否有配置错误，脚本会自动每60天执行一次,可手动执行
 
